@@ -1,0 +1,52 @@
+<html>
+ <head>
+   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+   <script
+			  src="https://code.jquery.com/jquery-3.1.1.min.js"
+			  integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+			  crossorigin="anonymous"></script>
+    <script src="public/OpenGloveAPI.js"></script>
+
+   <script type="text/javascript">
+       $(document).ready(
+         function(){
+           GetGloves().done(
+             function (gloves){
+               var i = 0;
+               console.log("test ");
+                function loopLi() {
+                    flag = setInterval(function() { // this code is executed every 500 milliseconds:
+                      if(i > 500){
+                        clearInterval(flag );
+                      }
+
+                      if (i % 2 !== 0) {
+                        var t0 = performance.now();
+                        Activate(gloves[0], HandRegion.PalmarFingerIndexDistal, 0);
+                        var t1 = performance.now();
+                        console.log((t1 - t0))
+                      }else{
+                        var t0 = performance.now();
+                        Activate(gloves[0], HandRegion.PalmarFingerIndexDistal, 255);
+                        var t1 = performance.now();
+                        console.log((t1 - t0))
+                      }
+                      i = i + 1;
+
+
+                    }, 250);
+                }
+                loopLi();
+           }
+
+         )
+         }
+       );
+    </script>
+ </head>
+<body>
+  <div>
+</div>
+
+</body>
+</html>
