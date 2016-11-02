@@ -15,7 +15,7 @@ function GetGloves() {
 /**
   Activates a region based on a glove current mappings.
 * @param {Glove} glove - Glove object. Use the ones returned from GetGloves.
-* @param {integer} author - One of the regions defined by the SDK (0 to 57)
+* @param {integer} region - One of the regions defined by the SDK (0 to 57)
 * @param {integer} intensity - Intensity of the activation (0 to 255)
 */
 function Activate(glove, region, intensity) {
@@ -33,6 +33,53 @@ function Activate(glove, region, intensity) {
     });
 };
 
+/**
+  Activates regions based on a glove current mappings.
+* @param {Glove} glove - Glove object. Use the ones returned from GetGloves.
+* @param {integer} regions - List of regions defined by the SDK (0 to 57)
+* @param {integer} intensityList - Intensity list of the activation for each region (0 to 255)
+*/
+function ActivateMany(glove, regions, intensityList) {
+    actuators = [];
+
+    regions.forEach(
+      function(region){
+        glove.GloveConfiguration.GloveProfile.Mappings.forEach(function(mapping) {
+          if (mapping.Key == String(region)) {
+            actuators.push(parseInt(mapping.Value));
+            return false;
+          }
+        });
+
+      }
+    );
+
+    var jsonObject = JSON.stringify(
+        {
+        actuators: actuators,
+        intensityList: intensityList
+      }
+    );
+
+    //console.log(jsonObject);
+    $.ajax({
+      url: baseAddress
+       + 'ActivateMany?gloveAddress=' + glove.BluetoothAddress,
+      type: 'POST',
+      contentType: 'application/json',
+      data:
+          jsonObject
+        ,
+      dataType: 'json'
+    });
+    return;
+};
+
+/**
+
+  Contains the regions defined by the SDK. Refer to these constants to activate
+  a glove.
+**/
 var HandRegion = {
   PalmarFingerSmallDistal: 0,
   PalmarFingerRingDistal: 1,
